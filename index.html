@@ -1,144 +1,165 @@
 <!DOCTYPE html>
 <html lang="da">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vil du være min Valentine?</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vil du være min Valentine?</title>
 
-<style>
-body{
-  margin:0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg,#ff4d6d,#c9184a);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-  color:white;
-  text-align:center;
-  overflow:hidden;
-}
+  <style>
+    body{
+      margin:0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg,#ff4d6d,#c9184a);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+      color:white;
+      text-align:center;
+      overflow:hidden;
+    }
 
-.box{
-  background:rgba(255,255,255,0.15);
-  padding:40px;
-  border-radius:20px;
-  backdrop-filter: blur(10px);
-  max-width:400px;
-}
+    .box{
+      background:rgba(255,255,255,0.15);
+      padding:40px;
+      border-radius:20px;
+      backdrop-filter: blur(10px);
+      max-width:420px;
+    }
 
-button{
-  padding:12px 20px;
-  margin:10px;
-  border:none;
-  border-radius:10px;
-  font-size:16px;
-  cursor:pointer;
-  font-weight:bold;
-}
+    .btnwrap{
+      position: relative;
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:16px;
+    }
 
-.yes{
-  background:white;
-  color:#c9184a;
+    button{
+      padding:12px 20px;
+      border:none;
+      border-radius:10px;
+      font-size:16px;
+      cursor:pointer;
+      font-weight:bold;
+      transition: transform 0.08s ease;
+    }
+    button:active{ transform: translateY(1px); }
 
-}
-.no{
-  background:#00000030;
-  color:white;
-}
+    .yes{
+      background:white;
+      color:#c9184a;
+    }
 
-.hidden{
-  display:none;
-}
+    .no{
+      background:#00000030;
+      color:white;
+      position: relative; /* vigtigt for at flytte den */
+    }
 
-.heart{
-  position:fixed;
-  top:-20px;
-  font-size:20px;
-  animation: fall linear forwards;
-}
+    .hidden{ display:none; }
 
-@keyframes fall{
-  to{
-    transform:translateY(110vh);
-    opacity:0;
-  }
-}
-</style>
+    .heart{
+      position:fixed;
+      top:-20px;
+      font-size:20px;
+      animation: fall linear forwards;
+      pointer-events:none;
+      user-select:none;
+    }
+
+    @keyframes fall{
+      to{
+        transform:translateY(110vh);
+        opacity:0;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="box" id="questionBox">
+    <h1>Vil du være min Valentine? 💘</h1>
 
-<div class="box" id="questionBox">
-  <h1>Vil du være min Valentine? 💘</h1>
-  <button class="yes" onclick="yesClicked()">JA 💖</button>
-  <button class="no" onclick="noClicked()">NEJ 😅</button>
-</div>
+    <div class="btnwrap" id="btnArea">
+      <button class="yes" id="yesBtn">JA 💖</button>
+      <button class="no" id="noBtn">NEJ 😅</button>
+    </div>
+  </div>
 
-<div class="box hidden" id="yesBox">
-  <h1>YEEEEES 🥰❤️</h1>
-  <p>Okay, så er det officielt… Jeg elsker dig virkelig meget.</p>
-  <p>Glæder mig til at fejre os 💞</p>
-</div>
+  <div class="box hidden" id="yesBox">
+    <h1>YEEEEES 🥰❤️</h1>
+    <p>Okay, så er det officielt… Jeg elsker dig virkelig meget.</p>
+    <p>Glæder mig til at fejre os 💞</p>
+  </div>
 
-<div class="box hidden" id="noBox">
-  <h1>Er du sikker? 😏</h1>
-  <p>Jeg giver ikke op så let… prøv lige igen 💕</p>
-  <button class="yes" onclick="retry()">Okay så... JA 💘</button>
-</div>
+  <div class="box hidden" id="noBox">
+    <h1>Er du sikker? 😏</h1>
+    <p>Den knap virker vist ikke i dag… 💕</p>
+    <button class="yes" id="retryBtn">Okay så… JA 💘</button>
+  </div>
 
-<script>
-function yesClicked(){
-   ...
-}
+  <script>
+    const questionBox = document.getElementById("questionBox");
+    const yesBox = document.getElementById("yesBox");
+    const noBox = document.getElementById("noBox");
 
-function noClicked(){
-   ...
-}
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn  = document.getElementById("noBtn");
+    const retryBtn = document.getElementById("retryBtn");
+    const btnArea = document.getElementById("btnArea");
 
-function retry(){
-   ...
-}
+    // Flow
+    yesBtn.addEventListener("click", () => {
+      questionBox.classList.add("hidden");
+      yesBox.classList.remove("hidden");
+      heartRain();
+    });
 
-function heartRain(){
-   ...
-}
+    retryBtn.addEventListener("click", () => {
+      noBox.classList.add("hidden");
+      yesBox.classList.remove("hidden");
+      heartRain();
+    });
 
-const noBtn = document.getElementById("noBtn");
+    // NEJ-knappen flytter sig (mus + touch + klik)
+    function moveNoButton(){
+      const rect = btnArea.getBoundingClientRect();
 
-noBtn.addEventListener("mouseenter", moveButton);
+      // Maks flyt indenfor området, så den ikke hopper helt væk
+      const maxX = rect.width  - noBtn.offsetWidth;
+      const maxY = rect.height - noBtn.offsetHeight;
 
-function moveButton(){
-  const x = Math.random() * 300 - 150;
-  const y = Math.random() * 200 - 100;
+      // Hvis området er “for lille”, så bare en lille hop
+      const x = Math.max(0, Math.random() * (maxX > 0 ? maxX : 120));
+      const y = Math.max(0, Math.random() * (maxY > 0 ? maxY : 60));
 
-  noBtn.style.position = "relative";
-  noBtn.style.left = x + "px";
-  noBtn.style.top = y + "px";
-}
+      noBtn.style.position = "absolute";
+      noBtn.style.left = x + "px";
+      noBtn.style.top  = y + "px";
+    }
 
-</script>
+    // Vis “noBox” hvis hun faktisk får trykket (kun hvis du vil)
+    // Her gør vi i stedet: den flytter sig bare + en lille drilsk tekst
+    noBtn.addEventListener("pointerenter", moveNoButton);
+    noBtn.addEventListener("mouseenter", moveNoButton);
+    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveNoButton(); }, { passive:false });
+    noBtn.addEventListener("click", (e) => { e.preventDefault(); moveNoButton(); });
 
+    function heartRain(){
+      for(let i=0;i<30;i++){
+        const heart = document.createElement("div");
+        heart.className = "heart";
+        heart.textContent = "❤️";
+        heart.style.left = Math.random()*100 + "vw";
+        heart.style.animationDuration = (2 + Math.random()*3) + "s";
+        heart.style.fontSize = (14 + Math.random()*18) + "px";
+        document.body.appendChild(heart);
 
-function retry(){
-  document.getElementById("noBox").classList.add("hidden");
-  document.getElementById("yesBox").classList.remove("hidden");
-  heartRain();
-}
-
-function heartRain(){
-  for(let i=0;i<30;i++){
-    let heart = document.createElement("div");
-    heart.className = "heart";
-    heart.innerHTML = "❤️";
-    heart.style.left = Math.random()*100 + "vw";
-    heart.style.animationDuration = (2 + Math.random()*3) + "s";
-    document.body.appendChild(heart);
-
-    setTimeout(()=>{heart.remove()},4000);
-  }
-}
-</script>
-
+        setTimeout(()=> heart.remove(), 4500);
+      }
+    }
+  </script>
 </body>
 </html>
