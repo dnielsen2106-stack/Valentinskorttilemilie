@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vil du være min Valentine?</title>
+
+<style>
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg,#ff4d6d,#c9184a);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  color:white;
+  text-align:center;
+  overflow:hidden;
+}
+
+.box{
+  background:rgba(255,255,255,0.15);
+  padding:40px;
+  border-radius:20px;
+  backdrop-filter: blur(10px);
+  max-width:400px;
+}
+
+button{
+  padding:12px 20px;
+  margin:10px;
+  border:none;
+  border-radius:10px;
+  font-size:16px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.yes{
+  background:white;
+  color:#c9184a;
+}
+
+.no{
+  background:#00000030;
+  color:white;
+}
+
+.hidden{
+  display:none;
+}
+
+.heart{
+  position:fixed;
+  top:-20px;
+  font-size:20px;
+  animation: fall linear forwards;
+}
+
+@keyframes fall{
+  to{
+    transform:translateY(110vh);
+    opacity:0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="box" id="questionBox">
+  <h1>Vil du være min Valentine? 💘</h1>
+  <button class="yes" onclick="yesClicked()">JA 💖</button>
+  <button class="no" onclick="noClicked()">NEJ 😅</button>
+</div>
+
+<div class="box hidden" id="yesBox">
+  <h1>YEEEEES 🥰❤️</h1>
+  <p>Okay, så er det officielt… Jeg elsker dig virkelig meget.</p>
+  <p>Glæder mig til at fejre os 💞</p>
+</div>
+
+<div class="box hidden" id="noBox">
+  <h1>Er du sikker? 😏</h1>
+  <p>Jeg giver ikke op så let… prøv lige igen 💕</p>
+  <button class="yes" onclick="retry()">Okay så... JA 💘</button>
+</div>
+
+<script>
+function yesClicked(){
+  document.getElementById("questionBox").classList.add("hidden");
+  document.getElementById("yesBox").classList.remove("hidden");
+  heartRain();
+}
+
+function noClicked(){
+  document.getElementById("questionBox").classList.add("hidden");
+  document.getElementById("noBox").classList.remove("hidden");
+}
+
+function retry(){
+  document.getElementById("noBox").classList.add("hidden");
+  document.getElementById("yesBox").classList.remove("hidden");
+  heartRain();
+}
+
+function heartRain(){
+  for(let i=0;i<30;i++){
+    let heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerHTML = "❤️";
+    heart.style.left = Math.random()*100 + "vw";
+    heart.style.animationDuration = (2 + Math.random()*3) + "s";
+    document.body.appendChild(heart);
+
+    setTimeout(()=>{heart.remove()},4000);
+  }
+}
+</script>
+
+</body>
+</html>
